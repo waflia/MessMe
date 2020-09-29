@@ -14,4 +14,12 @@
         app:srcCompat ="@drawable/send_message_btn"
         app:fabSize="auto"
         android:layout_margin="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 </com.google.android.material.circularreveal.coordinatorlayout.CircularRevealCoordinatorLayout>

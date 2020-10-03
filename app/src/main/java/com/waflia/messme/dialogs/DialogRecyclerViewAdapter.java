@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 import com.waflia.messme.R;
+import com.waflia.messme.RandomUserAPI.Model.Result;
 
 import java.io.IOException;
 import java.util.List;
 
 public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecyclerViewAdapter.ViewHolder> {
 
-    private List<UserDialog> dialogList;
+    private List<Result> dialogList;
 
-    public DialogRecyclerViewAdapter(List<UserDialog> dialogList) {
+    public DialogRecyclerViewAdapter(List<Result> dialogList) {
         this.dialogList = dialogList;
     }
 
@@ -32,14 +33,19 @@ public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.username.setText(dialogList.get(position).getUsername());
-
-        holder.dialogImage.setImageResource(R.drawable.ic_launcher_foreground);
+        holder.username.setText(dialogList.get(position).getName().getFullName());
+        String avatar_url = dialogList.get(position).getPicture().getLarge();
+        Picasso.get().load(avatar_url).into(holder.dialogImage);
     }
 
     @Override
     public int getItemCount() {
         return dialogList.size();
+    }
+
+    public void setDialogList(List<Result> dialogList) {
+        this.dialogList = dialogList;
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

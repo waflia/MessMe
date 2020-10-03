@@ -1,6 +1,7 @@
 package com.waflia.messme;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,6 +13,7 @@ import android.util.Log;
 import com.waflia.messme.RandomUserAPI.Model.RandomUserResponse;
 import com.waflia.messme.RandomUserAPI.Model.Result;
 import com.waflia.messme.RandomUserAPI.RandomAPIService;
+import com.waflia.messme.chat.ChatFragment;
 import com.waflia.messme.dialogs.DialogRecyclerViewAdapter;
 import com.waflia.messme.dialogs.UserDialog;
 
@@ -43,6 +45,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Result> results) {
                 adapter.setDialogList(results);
+            }
+        });
+
+        adapter.getClickEvents().observe(this, new Observer<Result>() {
+            @Override
+            public void onChanged(Result result) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                getSupportFragmentManager().popBackStack();
+                ft.replace(R.id.main_root, new ChatFragment(result));
+                ft.commit();
+                //getSupportFragmentManager().popBackStack();
             }
         });
 //        List<UserDialog> testUser = new ArrayList<>();

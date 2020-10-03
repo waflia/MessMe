@@ -7,6 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -16,9 +19,12 @@ import com.waflia.messme.RandomUserAPI.Model.Result;
 import java.io.IOException;
 import java.util.List;
 
-public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecyclerViewAdapter.ViewHolder> {
+import io.reactivex.rxjava3.core.Observable;
+
+public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecyclerViewAdapter.ViewHolder>{
 
     private List<Result> dialogList;
+    private MutableLiveData<Result> onClickObservable = new MutableLiveData<>();
 
     public DialogRecyclerViewAdapter(List<Result> dialogList) {
         this.dialogList = dialogList;
@@ -36,6 +42,17 @@ public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecycl
         holder.username.setText(dialogList.get(position).getName().getFullName());
         String avatar_url = dialogList.get(position).getPicture().getLarge();
         Picasso.get().load(avatar_url).into(holder.dialogImage);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickObservable.setValue(dialogList.get(position));
+            }
+        });
+    }
+
+    public LiveData<Result> getClickEvents(){
+        return onClickObservable;
     }
 
     @Override
@@ -55,6 +72,7 @@ public class DialogRecyclerViewAdapter extends RecyclerView.Adapter<DialogRecycl
             super(itemView);
             username = itemView.findViewById(R.id.textView);
             dialogImage = itemView.findViewById(R.id.imageView);
+
         }
     }
 }

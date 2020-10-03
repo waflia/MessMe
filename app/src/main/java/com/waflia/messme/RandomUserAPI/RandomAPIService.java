@@ -8,5 +8,5 @@ import retrofit2.http.Query;
 
 public interface RandomAPIService {
     @GET("api")
-    Call<RandomUserResponse> getRandomUserResponse(@Query("results") int results);
+    Call<RandomUserResponse> getRandomUserResponse(@Query("results") int results, @Query("seed") String seed);
 }

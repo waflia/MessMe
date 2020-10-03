@@ -1,6 +1,9 @@
 package com.waflia.messme;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
@@ -35,30 +38,13 @@ public class MainActivity extends AppCompatActivity {
         DialogRecyclerViewAdapter adapter = new DialogRecyclerViewAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://randomuser.me/")
-                .addConverterFactory(MoshiConverterFactory.create())
-                .build();
-
-        RandomAPIService service = retrofit.create(RandomAPIService.class);
-        Call<RandomUserResponse> call = service.getRandomUserResponse(10);
-        call.enqueue(new Callback<RandomUserResponse>() {
+        LiveData<List<Result>> results = new ViewModelProvider(this).get(DialogViewModel.class).getData();
+        results.observe(this, new Observer<List<Result>>() {
             @Override
-            public void onResponse(Call<RandomUserResponse> call, Response<RandomUserResponse> response) {
-                if(response.isSuccessful()){
-                    Log.d("MessMe", "Success api response");
-                    RandomUserResponse randomUserResponse = response.body();
-                    List<Result> results = randomUserResponse.getResults();
-                    adapter.setDialogList(results);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RandomUserResponse> call, Throwable t) {
-                Log.d("MessMe", t.getMessage());
+            public void onChanged(List<Result> results) {
+                adapter.setDialogList(results);
             }
         });
-
 //        List<UserDialog> testUser = new ArrayList<>();
 ////        for(int i = 0; i < 10; i++){
 ////            UserDialog userDialog = new UserDialog("User" + i, R.drawable.ic_launcher_foreground);

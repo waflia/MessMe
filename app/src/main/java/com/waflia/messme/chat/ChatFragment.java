@@ -42,6 +42,7 @@ public class ChatFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        getActivity().setTitle(result.getName().getFullName());
         // TODO: Use the ViewModel
     }
 

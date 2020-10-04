@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.circularreveal.coordinatorlayout.CircularRevealCoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_root"
+    android:id="@+id/main_fragment"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -19,8 +19,5 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialog_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-</com.google.android.material.circularreveal.coordinatorlayout.CircularRevealCoordinatorLayout>
+        android:layout_height="match_parent"/>
+</FrameLayout>

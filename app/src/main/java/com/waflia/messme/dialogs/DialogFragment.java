@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.waflia.messme.DialogViewModel;
 import com.waflia.messme.R;
 import com.waflia.messme.RandomUserAPI.Model.Result;
@@ -22,6 +25,8 @@ import com.waflia.messme.chat.ChatFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.waflia.messme.chat.ChatFragment.SIGN_IN_CODE;
 
 public class DialogFragment extends Fragment {
     @Nullable
@@ -34,6 +39,21 @@ public class DialogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Диалоги");
+
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
+        }else{
+            Toast.makeText(this.getContext(), "Вы авторизованы как "
+                    + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         RecyclerView recyclerView = getView().findViewById(R.id.dialog_list);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
@@ -48,12 +68,7 @@ public class DialogFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         LiveData<List<Result>> results = new ViewModelProvider(this).get(DialogViewModel.class).getData();
-        results.observe(this.getViewLifecycleOwner(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(List<Result> results) {
-                adapter.setDialogList(results);
-            }
-        });
+        results.observe(this.getViewLifecycleOwner(), results1 -> adapter.setDialogList(results1));
     }
 
     private void changeFragment(Fragment f){

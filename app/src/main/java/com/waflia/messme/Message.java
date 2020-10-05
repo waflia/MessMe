@@ -8,6 +8,8 @@ public class Message {
     public String to_name;
     private long time;
 
+    public Message(){}
+
     public Message(String text, String from_name, String to_name) {
         this.text = text;
         this.from_name = from_name;

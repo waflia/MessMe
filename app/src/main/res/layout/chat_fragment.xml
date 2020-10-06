@@ -19,7 +19,16 @@
         android:dividerHeight="4dp"
         android:footerDividersEnabled="true"
         android:headerDividersEnabled="true"
-        android:paddingBottom="8dp" />
+        android:padding="8dp"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbarSize="0dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal" />
 
     <LinearLayout
         android:id="@+id/bottom_layout"
@@ -32,29 +41,29 @@
         android:background="#FFFFFF"
         android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input"
+        <ImageView
+            android:id="@+id/chat_emoji_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="2dp"
+            android:padding="8dp"
+            android:src="@drawable/chat_smile_btn" />
+
+        <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+            android:id="@+id/message_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start|left"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="2dp"
             android:layout_weight="1"
-            android:background="#FFFFFF"
-            android:orientation="horizontal">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:id="@+id/message_field"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
-                android:cursorVisible="true"
-                android:hint="Message"
-                android:inputType="textAutoCorrect" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:backgroundTint="#00FFFFFF"
+            android:cursorVisible="true"
+            android:hint="Message"
+            android:inputType="textAutoCorrect"
+            android:textColorHighlight="#17FFFFFF"
+            android:textColorLink="#00FFFFFF" />
 
         <ImageButton
             android:id="@+id/chat_send_btn"

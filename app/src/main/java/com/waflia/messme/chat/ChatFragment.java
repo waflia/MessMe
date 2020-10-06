@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,6 +32,9 @@ import com.waflia.messme.Message;
 import com.waflia.messme.R;
 import com.waflia.messme.RandomUserAPI.Model.Result;
 
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+
 import static android.app.Activity.RESULT_OK;
 
 public class ChatFragment extends Fragment {
@@ -40,6 +44,9 @@ public class ChatFragment extends Fragment {
     private Result result;
     private FirebaseListAdapter<Message> adapter;
     private ImageButton sendBtn;
+    private ImageView emojiBtn;
+    private EmojIconActions emojIconActions;
+    private EmojiconEditText messageField;
 
     public static ChatFragment newInstance() {
         return new ChatFragment();
@@ -59,6 +66,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         getActivity().setTitle(result.getName().getFullName());
 
@@ -71,10 +79,15 @@ public class ChatFragment extends Fragment {
         }
 
         sendBtn = getView().findViewById(R.id.chat_send_btn);
+        emojiBtn = getView().findViewById(R.id.chat_emoji_image_view);
+        messageField = getView().findViewById(R.id.message_field);
+
+        emojIconActions = new EmojIconActions(getContext(), getView(), messageField, emojiBtn);
+        emojIconActions.ShowEmojIcon();
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText messageField = getView().findViewById(R.id.message_field);
                 String messageText = messageField.getText().toString();
                 if(messageText == ""){
                     return;

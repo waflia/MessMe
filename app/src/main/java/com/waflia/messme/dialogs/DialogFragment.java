@@ -49,7 +49,7 @@ public class DialogFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @Override

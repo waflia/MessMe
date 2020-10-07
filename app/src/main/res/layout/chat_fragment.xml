@@ -17,12 +17,8 @@
         android:layout_alignParentEnd="true"
         android:divider="#00FFFFFF"
         android:dividerHeight="4dp"
-        android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true"
-        android:paddingStart="8dp"
-        android:paddingLeft="8dp"
-        android:paddingEnd="8dp"
-        android:paddingRight="8dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
         android:scrollbarSize="0dp"
         android:stackFromBottom="true"
         android:transcriptMode="normal" />
@@ -76,7 +72,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right|end"
             android:backgroundTint="#00FFFFFF"
-
             android:src="@drawable/chat_send_message_btn" />
     </LinearLayout>
 </RelativeLayout>

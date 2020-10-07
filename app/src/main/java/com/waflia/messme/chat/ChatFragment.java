@@ -46,7 +46,7 @@ import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 import static android.app.Activity.RESULT_OK;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements View.OnClickListener {
 
     public static final int SIGN_IN_CODE = 1;
     private ChatViewModel mViewModel;
@@ -57,6 +57,7 @@ public class ChatFragment extends Fragment {
     private EmojIconActions emojIconActions;
     private EmojiconEditText messageField;
     private String currentUser;
+    private int DP;
 
     public static ChatFragment newInstance() {
         return new ChatFragment();
@@ -76,18 +77,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        DP = (int)getResources().getDisplayMetrics().density;
         mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         getActivity().setTitle(result.getName().getFullName());
 
-        if(FirebaseAuth.getInstance().getCurrentUser() == null){
-            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
-        }else{
-            Toast.makeText(this.getContext(), "Вы авторизованы как "
-                    + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
-            currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            displayAllMessages();
-        }
+        checkFirebaseAuth();
 
         sendBtn = getView().findViewById(R.id.chat_send_btn);
         emojiBtn = getView().findViewById(R.id.chat_emoji_image_view);
@@ -96,22 +90,18 @@ public class ChatFragment extends Fragment {
         emojIconActions = new EmojIconActions(getContext(), getView(), messageField, emojiBtn);
         emojIconActions.ShowEmojIcon();
 
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String messageText = messageField.getText().toString();
-                if(messageText == ""){
-                    return;
-                }
-                FirebaseDatabase.getInstance().getReference()
-                        .push().setValue(new Message(
-                                messageText,
-                                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                                result.getEmail())
-                );
-                messageField.setText("");
-            }
-        });
+        sendBtn.setOnClickListener(this);
+    }
+
+    private void checkFirebaseAuth() {
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
+        }else{
+            Toast.makeText(this.getContext(), "Вы авторизованы как "
+                    + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            displayAllMessages();
+        }
     }
 
     private void displayAllMessages() {
@@ -123,6 +113,15 @@ public class ChatFragment extends Fragment {
                 .setLayout(R.layout.message_item)
                 .setQuery(query, Message.class)
                 .build();
+
+        getMessagesFromFirebase(options);
+
+        listOfMessages.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        //listOfMessages.scrollBy(0, 4 * DP);
+    }
+
+    private void getMessagesFromFirebase(FirebaseListOptions<Message> options) {
         adapter = new FirebaseListAdapter<Message>(options) {
             @Override
             protected void populateView(@NonNull View v, @NonNull Message model, int position) {
@@ -132,24 +131,18 @@ public class ChatFragment extends Fragment {
                 if(model.getFrom_name().equals(currentUser)){
                     LinearLayout root = v.findViewById(R.id.message_root);
                     ConstraintLayout message_view = v.findViewById(R.id.message_view);
-//                    ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(message_view.getLayoutParams());
-//                    params.setMargins(20, 0, 0, 0);
-//                    message_view.setLayoutParams(params);
-                    root.setPadding((int)(60 * getResources().getDisplayMetrics().density) , 0, 0, 0);
+
+                    root.setPadding(60 * DP , 0, 4 * DP, 0);
                     message_view.setBackgroundTintList(ColorStateList.valueOf(
                             getResources().getColor(R.color.colorMessageViewRight,
-                                                    getActivity().getTheme())));
+                                    getActivity().getTheme())));
                     root.setGravity(Gravity.END);
-                    //root.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                 }
 
                 mess_text.setText(model.getText());
                 mess_time.setText(DateFormat.format("HH:mm", model.getTime()));
             }
         };
-
-        listOfMessages.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -164,5 +157,20 @@ public class ChatFragment extends Fragment {
                 Toast.makeText(this.getContext(), "Вы не авторизованы", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        String messageText = messageField.getText().toString();
+        if(messageText.equals("")){
+            return;
+        }
+        FirebaseDatabase.getInstance().getReference()
+                .push().setValue(new Message(
+                messageText,
+                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                result.getEmail())
+        );
+        messageField.setText("");
     }
 }

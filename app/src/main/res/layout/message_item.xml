@@ -4,10 +4,12 @@
     android:id="@+id/message_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
     android:layout_columnWeight="1"
     android:layout_centerVertical="false"
-    android:orientation="horizontal">
+    android:layout_marginVertical="2dp"
+    android:orientation="horizontal"
+    android:paddingLeft="4dp"
+    android:paddingRight="60dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/message_view"

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.waflia.messme.DialogViewModel;
 import com.waflia.messme.R;
 import com.waflia.messme.RandomUserAPI.Model.Result;
@@ -40,7 +41,6 @@ public class DialogFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Диалоги");
 
-
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
         }else{
@@ -48,6 +48,8 @@ public class DialogFragment extends Fragment {
                     + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
                     Toast.LENGTH_SHORT).show();
         }
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DialogFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         LiveData<List<Result>> results = new ViewModelProvider(this).get(DialogViewModel.class).getData();
-        results.observe(this.getViewLifecycleOwner(), results1 -> adapter.setDialogList(results1));
+        results.observe(this.getViewLifecycleOwner(), adapter::setDialogList);
     }
 
     private void changeFragment(Fragment f){

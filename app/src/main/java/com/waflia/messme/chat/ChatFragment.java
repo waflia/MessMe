@@ -1,8 +1,12 @@
 package com.waflia.messme.chat;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +22,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +38,8 @@ import com.google.firebase.database.Query;
 import com.waflia.messme.Message;
 import com.waflia.messme.R;
 import com.waflia.messme.RandomUserAPI.Model.Result;
+
+import java.util.Objects;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -47,6 +56,7 @@ public class ChatFragment extends Fragment {
     private ImageView emojiBtn;
     private EmojIconActions emojIconActions;
     private EmojiconEditText messageField;
+    private String currentUser;
 
     public static ChatFragment newInstance() {
         return new ChatFragment();
@@ -75,6 +85,7 @@ public class ChatFragment extends Fragment {
         }else{
             Toast.makeText(this.getContext(), "Вы авторизованы как "
                     + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             displayAllMessages();
         }
 
@@ -95,8 +106,8 @@ public class ChatFragment extends Fragment {
                 FirebaseDatabase.getInstance().getReference()
                         .push().setValue(new Message(
                                 messageText,
-                                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                                result.getName().getFullName())
+                                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                result.getEmail())
                 );
                 messageField.setText("");
             }
@@ -104,7 +115,8 @@ public class ChatFragment extends Fragment {
     }
 
     private void displayAllMessages() {
-        ListView listOfMessages = getView().findViewById(R.id.messages_view);
+        ListView listOfMessages = Objects.requireNonNull(getView(), "ListView not found").findViewById(R.id.messages_view);
+
         Query query = FirebaseDatabase.getInstance().getReference();
         FirebaseListOptions<Message> options = new FirebaseListOptions.Builder<Message>()
                 .setLifecycleOwner(this)
@@ -117,6 +129,19 @@ public class ChatFragment extends Fragment {
                 TextView mess_text, mess_time;
                 mess_text = v.findViewById(R.id.message_tv);
                 mess_time = v.findViewById(R.id.message_date_tv);
+                if(model.getFrom_name().equals(currentUser)){
+                    LinearLayout root = v.findViewById(R.id.message_root);
+                    ConstraintLayout message_view = v.findViewById(R.id.message_view);
+//                    ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(message_view.getLayoutParams());
+//                    params.setMargins(20, 0, 0, 0);
+//                    message_view.setLayoutParams(params);
+                    root.setPadding((int)(60 * getResources().getDisplayMetrics().density) , 0, 0, 0);
+                    message_view.setBackgroundTintList(ColorStateList.valueOf(
+                            getResources().getColor(R.color.colorMessageViewRight,
+                                                    getActivity().getTheme())));
+                    root.setGravity(Gravity.END);
+                    //root.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                }
 
                 mess_text.setText(model.getText());
                 mess_time.setText(DateFormat.format("HH:mm", model.getTime()));
@@ -133,6 +158,7 @@ public class ChatFragment extends Fragment {
         if(requestCode == SIGN_IN_CODE){
             if(resultCode == RESULT_OK){
                 Toast.makeText(this.getContext(), "Вы авторизованы", Toast.LENGTH_SHORT).show();
+                currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 displayAllMessages();
             }else{
                 Toast.makeText(this.getContext(), "Вы не авторизованы", Toast.LENGTH_SHORT).show();

@@ -40,6 +40,7 @@ public class DialogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Диалоги");
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
@@ -49,7 +50,7 @@ public class DialogFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
 
-        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     @Override

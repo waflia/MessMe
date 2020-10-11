@@ -6,7 +6,20 @@ public class Message {
     public String text;
     public String from_name;
     public String to_name;
+    private String chat_id;
     private long time;
+
+    public String getChat_id() {
+        if(from_name.hashCode() < to_name.hashCode()) {
+            return from_name + to_name;
+        }else{
+            return to_name + from_name;
+        }
+    }
+
+    public void setChat_id(String chat_id) {
+        this.chat_id = chat_id;
+    }
 
     public Message(){}
 

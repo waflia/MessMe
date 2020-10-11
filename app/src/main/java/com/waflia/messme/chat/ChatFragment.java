@@ -58,6 +58,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private EmojiconEditText messageField;
     private String currentUser;
     private int DP;
+    private ListView listOfMessages;
 
     public static ChatFragment newInstance() {
         return new ChatFragment();
@@ -78,6 +79,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         DP = (int)getResources().getDisplayMetrics().density;
+
         mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         getActivity().setTitle(result.getName().getFullName());
 
@@ -105,17 +107,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
 
     private void displayAllMessages() {
-        ListView listOfMessages = Objects.requireNonNull(getView(), "ListView not found").findViewById(R.id.messages_view);
-
-        Query query = FirebaseDatabase.getInstance().getReference();
+        listOfMessages = Objects.requireNonNull(getView(), "ListView not found").findViewById(R.id.messages_view);
+        Query query = FirebaseDatabase.getInstance().getReference().orderByChild("chat_id").equalTo(getChatId());
         FirebaseListOptions<Message> options = new FirebaseListOptions.Builder<Message>()
                 .setLifecycleOwner(this)
                 .setLayout(R.layout.message_item)
                 .setQuery(query, Message.class)
                 .build();
-
         getMessagesFromFirebase(options);
-
         listOfMessages.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         //listOfMessages.scrollBy(0, 4 * DP);
@@ -125,22 +124,23 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         adapter = new FirebaseListAdapter<Message>(options) {
             @Override
             protected void populateView(@NonNull View v, @NonNull Message model, int position) {
-                TextView mess_text, mess_time;
-                mess_text = v.findViewById(R.id.message_tv);
-                mess_time = v.findViewById(R.id.message_date_tv);
-                if(model.getFrom_name().equals(currentUser)){
+                if(model.getFrom_name().equals(result.getEmail()) || model.getTo_name().equals(result.getEmail())) {
+                    TextView mess_text, mess_time;
+                    mess_text = v.findViewById(R.id.message_tv);
+                    mess_time = v.findViewById(R.id.message_date_tv);
                     LinearLayout root = v.findViewById(R.id.message_root);
                     ConstraintLayout message_view = v.findViewById(R.id.message_view);
-
-                    root.setPadding(60 * DP , 0, 4 * DP, 0);
-                    message_view.setBackgroundTintList(ColorStateList.valueOf(
-                            getResources().getColor(R.color.colorMessageViewRight,
-                                    getActivity().getTheme())));
-                    root.setGravity(Gravity.END);
+                    if (model.getFrom_name().equals(currentUser)) {
+                        root.setPadding(60 * DP, 0, 4 * DP, 0);
+                        message_view.setBackgroundTintList(ColorStateList.valueOf(
+                                getResources().getColor(R.color.colorMessageViewRight,
+                                        getActivity().getTheme())));
+                        root.setGravity(Gravity.END);
+                    }
+                    //root.setVisibility(View.VISIBLE);
+                    mess_text.setText(model.getText());
+                    mess_time.setText(DateFormat.format("HH:mm", model.getTime()));
                 }
-
-                mess_text.setText(model.getText());
-                mess_time.setText(DateFormat.format("HH:mm", model.getTime()));
             }
         };
     }
@@ -172,5 +172,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 result.getEmail())
         );
         messageField.setText("");
+    }
+
+    public String getChatId(){
+        if(currentUser.hashCode() < result.getEmail().hashCode()) {
+            return currentUser + result.getEmail();
+        }else{
+            return result.getEmail() + currentUser;
+        }
     }
 }

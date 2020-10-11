@@ -16,12 +16,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:divider="#00FFFFFF"
-        android:dividerHeight="4dp"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
+        android:dividerHeight="0dp"
         android:scrollbarSize="0dp"
-        android:stackFromBottom="true"
-        android:transcriptMode="normal" />
+        android:stackFromBottom="true" />
 
     <LinearLayout
         android:id="@+id/bottom_layout"
@@ -37,7 +34,7 @@
         <ImageView
             android:id="@+id/chat_emoji_image_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="start|bottom"
             android:layout_marginLeft="4dp"
             android:layout_marginBottom="2dp"

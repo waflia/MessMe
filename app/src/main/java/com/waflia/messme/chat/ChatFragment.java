@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -116,6 +117,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 .build();
         getMessagesFromFirebase(options);
         listOfMessages.setAdapter(adapter);
+
         adapter.notifyDataSetChanged();
         //listOfMessages.scrollBy(0, 4 * DP);
     }

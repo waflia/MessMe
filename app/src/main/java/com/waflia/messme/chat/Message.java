@@ -1,4 +1,4 @@
-package com.waflia.messme;
+package com.waflia.messme.chat;
 
 import java.util.Date;
 

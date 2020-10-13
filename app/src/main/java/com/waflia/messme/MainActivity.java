@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: MainActivity");
         setContentView(R.layout.main);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         changeFragment(new DialogFragment());
     }

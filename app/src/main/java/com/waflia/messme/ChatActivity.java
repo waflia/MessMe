@@ -1,21 +1,32 @@
-package com.waflia.messme.chat;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProvider;
+package com.waflia.messme;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.waflia.messme.RandomUserAPI.Model.Name;
+import com.waflia.messme.RandomUserAPI.Model.Result;
+import com.waflia.messme.chat.ChatViewModel;
+import com.waflia.messme.chat.Message;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.text.format.DateFormat;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,23 +34,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.firebase.ui.database.FirebaseListOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.waflia.messme.R;
-import com.waflia.messme.RandomUserAPI.Model.Result;
-
 import java.util.Objects;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-import static android.app.Activity.RESULT_OK;
-
-public class ChatFragment extends Fragment implements View.OnClickListener {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int SIGN_IN_CODE = 1;
     private ChatViewModel mViewModel;
@@ -53,39 +53,34 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private int DP;
     private ListView listOfMessages;
 
-    public static ChatFragment newInstance() {
-        return new ChatFragment();
-    }
-
-    public ChatFragment(){}
-    public ChatFragment(Result result){
-        this.result = result;
-
-    }
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.chat_fragment, container, false);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.chat_fragment);
+        if(result == null){
+            result = new Result();
+            result.setEmail(savedInstanceState.getString("chat_user_email"));
+            Name username = new Name();
+            username.setFirst(savedInstanceState.getString("chat_user_name"));
+            result.setName(username);
+        }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         DP = (int)getResources().getDisplayMetrics().density;
 
-        mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
-        if(mViewModel.getResult() == null) mViewModel.setResult(result);
-        result = mViewModel.getResult();
-        getActivity().setTitle(result.getName().getFullName());
+        //mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+       // if(mViewModel.getResult() == null) mViewModel.setResult(result);
+       // result = mViewModel.getResult();
+        setTitle(result.getName().getFirst());
 
         checkFirebaseAuth();
 
-        sendBtn = getView().findViewById(R.id.chat_send_btn);
-        emojiBtn = getView().findViewById(R.id.chat_emoji_image_view);
-        messageField = getView().findViewById(R.id.message_field);
+        sendBtn = findViewById(R.id.chat_send_btn);
+        emojiBtn = findViewById(R.id.chat_emoji_image_view);
+        messageField = findViewById(R.id.message_field);
 
-        emojIconActions = new EmojIconActions(getContext(), getView(), messageField, emojiBtn);
+        emojIconActions = new EmojIconActions(this, findViewById(R.id.activity_chat_root), messageField, emojiBtn);
         emojIconActions.ShowEmojIcon();
 
         sendBtn.setOnClickListener(this);
@@ -95,7 +90,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
         }else{
-            Toast.makeText(this.getContext(), "Вы авторизованы как "
+            Toast.makeText(this, "Вы авторизованы как "
                     + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
             currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             displayAllMessages();
@@ -103,7 +98,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
 
     private void displayAllMessages() {
-        listOfMessages = Objects.requireNonNull(getView(), "ListView not found").findViewById(R.id.messages_view);
+        listOfMessages = findViewById(R.id.messages_view);
         Query query = FirebaseDatabase.getInstance().getReference().orderByChild("chat_id").equalTo(getChatId());
         FirebaseListOptions<Message> options = new FirebaseListOptions.Builder<Message>()
                 .setLifecycleOwner(this)
@@ -131,7 +126,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                         root.setPadding(60 * DP, 0, 4 * DP, 0);
                         message_view.setBackgroundTintList(ColorStateList.valueOf(
                                 getResources().getColor(R.color.colorMessageViewRight,
-                                        getActivity().getTheme())));
+                                        getTheme())));
                         root.setGravity(Gravity.END);
                     }
                     //root.setVisibility(View.VISIBLE);
@@ -145,13 +140,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if(requestCode == SIGN_IN_CODE){
             if(resultCode == RESULT_OK){
-                Toast.makeText(this.getContext(), "Вы авторизованы", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Вы авторизованы", Toast.LENGTH_SHORT).show();
                 currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 displayAllMessages();
             }else{
-                Toast.makeText(this.getContext(), "Вы не авторизованы", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Вы не авторизованы", Toast.LENGTH_SHORT).show();
             }
         }
     }

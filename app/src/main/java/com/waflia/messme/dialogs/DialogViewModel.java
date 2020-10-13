@@ -1,4 +1,4 @@
-package com.waflia.messme;
+package com.waflia.messme.dialogs;
 
 import android.util.Log;
 

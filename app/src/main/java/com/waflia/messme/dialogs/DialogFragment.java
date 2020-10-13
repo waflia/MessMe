@@ -1,5 +1,6 @@
 package com.waflia.messme.dialogs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.waflia.messme.DialogViewModel;
+import com.waflia.messme.ChatActivity;
 import com.waflia.messme.R;
 import com.waflia.messme.RandomUserAPI.Model.Result;
 import com.waflia.messme.chat.ChatFragment;
@@ -65,7 +65,11 @@ public class DialogFragment extends Fragment {
         adapter.getClickEvents().observe(getViewLifecycleOwner(), new Observer<Result>() {
             @Override
             public void onChanged(Result result) {
-                changeFragment(new ChatFragment(result));
+                //changeFragment(new ChatFragment(result));
+                Bundle options = new Bundle();
+                options.putString("chat_user_email", result.getEmail());
+                options.putString("chat_user_name", result.getName().getFirst());
+                startActivity(new Intent(getContext(), ChatActivity.class), options);
             }
         });
         recyclerView.setAdapter(adapter);

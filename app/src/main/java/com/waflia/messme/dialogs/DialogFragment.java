@@ -30,6 +30,10 @@ import java.util.List;
 import static com.waflia.messme.chat.ChatFragment.SIGN_IN_CODE;
 
 public class DialogFragment extends Fragment {
+
+    public static final String CHAT_USER_EMAIL = "chat_user_email";
+    public static final String CHAT_USER_FIRST = "chat_user_first";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,10 +70,13 @@ public class DialogFragment extends Fragment {
             @Override
             public void onChanged(Result result) {
                 //changeFragment(new ChatFragment(result));
-                Bundle options = new Bundle();
-                options.putString("chat_user_email", result.getEmail());
-                options.putString("chat_user_name", result.getName().getFirst());
-                startActivity(new Intent(getContext(), ChatActivity.class), options);
+//                Bundle options = new Bundle();
+//                options.putString("chat_user_email", result.getEmail());
+//                options.putString("chat_user_name", result.getName().getFirst());
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.putExtra(CHAT_USER_EMAIL, result.getEmail());
+                intent.putExtra(CHAT_USER_FIRST, result.getName().getFirst());
+                startActivity(intent);
             }
         });
         recyclerView.setAdapter(adapter);

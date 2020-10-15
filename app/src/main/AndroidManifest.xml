@@ -13,8 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ChatActivity"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/title_activity_chat" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -38,6 +39,9 @@ import java.util.Objects;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
+
+import static com.waflia.messme.dialogs.DialogFragment.CHAT_USER_EMAIL;
+import static com.waflia.messme.dialogs.DialogFragment.CHAT_USER_FIRST;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -54,18 +58,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ListView listOfMessages;
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_fragment);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         if(result == null){
             result = new Result();
-            result.setEmail(savedInstanceState.getString("chat_user_email"));
+            result.setEmail(getIntent().getExtras().getString(CHAT_USER_EMAIL));
             Name username = new Name();
-            username.setFirst(savedInstanceState.getString("chat_user_name"));
+            username.setFirst(getIntent().getExtras().getString(CHAT_USER_FIRST));
             result.setName(username);
         }
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar actionBar = findViewById(R.id.action_bar);
+//        setSupportActionBar(actionBar);
 
         DP = (int)getResources().getDisplayMetrics().density;
 

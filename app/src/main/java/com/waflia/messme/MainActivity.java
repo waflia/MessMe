@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.waflia.messme.RandomUserAPI.Model.RandomUserResponse;
 import com.waflia.messme.RandomUserAPI.Model.Result;
 import com.waflia.messme.RandomUserAPI.RandomAPIService;
@@ -30,16 +31,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-
-
     public final String TAG = "MessMe";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: MainActivity");
         setContentView(R.layout.main);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
+        //getSupportActionBar().setHomeButtonEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         changeFragment(new DialogFragment());
     }
     public void changeFragment(Fragment f){

@@ -40,8 +40,9 @@ import java.util.Objects;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-import static com.waflia.messme.dialogs.DialogFragment.CHAT_USER_EMAIL;
-import static com.waflia.messme.dialogs.DialogFragment.CHAT_USER_FIRST;
+import static com.waflia.messme.MainActivity.CHAT_USER_EMAIL;
+import static com.waflia.messme.MainActivity.CHAT_USER_FIRST;
+
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 

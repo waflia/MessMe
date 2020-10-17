@@ -1,5 +1,6 @@
 package com.waflia.messme;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.lifecycle.LiveData;
@@ -12,6 +13,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -79,10 +82,11 @@ public class MainActivity extends AppCompatActivity {
     private void checkFirebaseAuth(){
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
+            Toast.makeText(this, "Вы не авторизованы", Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(this, "Вы авторизованы как "
-                            + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                    Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Вы авторизованы как "
+           //                 + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+           //                 Toast.LENGTH_SHORT).show();
         }
     }
 

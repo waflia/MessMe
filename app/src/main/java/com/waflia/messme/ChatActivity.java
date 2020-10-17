@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -57,14 +58,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private String currentUser;
     private int DP;
     private ListView listOfMessages;
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +99,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_CODE);
         }else{
-            Toast.makeText(this, "Вы авторизованы как "
-                    + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Вы авторизованы как "
+                 //   + FirebaseAuth.getInstance().getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
             currentUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             displayAllMessages();
         }
@@ -181,6 +174,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 result.getEmail())
         );
         messageField.setText("");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("menu 1");
+        menu.add("menu 2");
+        return false;
+        //return super.onCreateOptionsMenu(menu);
     }
 
     public String getChatId(){

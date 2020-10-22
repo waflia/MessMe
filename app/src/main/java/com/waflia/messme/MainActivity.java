@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.waflia.messme.RandomUserAPI.Model.Result;
 import com.waflia.messme.dialogs.DialogRecyclerViewAdapter;
 import com.waflia.messme.dialogs.DialogViewModel;
+import com.waflia.messme.dialogs.sqlite.MessMeDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String CHAT_USER_EMAIL = "chat_user_email";
     public static String CHAT_USER_FIRST = "chat_user_first";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         setTitle("Диалоги");
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         checkFirebaseAuth();
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -89,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
            //                 Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     @Override
     protected void onStart() {

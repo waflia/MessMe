@@ -1,6 +1,7 @@
 package com.waflia.messme;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
@@ -25,6 +26,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,7 +66,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_fragment);
-
+        listOfMessages = findViewById(R.id.messages_view);
+        registerForContextMenu(listOfMessages);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(result == null){
@@ -107,7 +111,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void displayAllMessages() {
-        listOfMessages = findViewById(R.id.messages_view);
         Query query = FirebaseDatabase.getInstance().getReference().orderByChild("chat_id").equalTo(getChatId());
         FirebaseListOptions<Message> options = new FirebaseListOptions.Builder<Message>()
                 .setLifecycleOwner(this)
@@ -199,5 +202,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             return result.getEmail() + currentUser;
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.chat_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        return super.onContextItemSelected(item);
     }
 }

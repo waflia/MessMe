@@ -1,9 +1,12 @@
 
 package com.waflia.messme.RandomUserAPI.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
-public class Info {
+public class Info implements Parcelable {
 
     @Json(name = "seed")
     private String seed;
@@ -13,6 +16,56 @@ public class Info {
     private Integer page;
     @Json(name = "version")
     private String version;
+
+    protected Info(Parcel in) {
+        seed = in.readString();
+        if (in.readByte() == 0) {
+            results = null;
+        } else {
+            results = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            page = null;
+        } else {
+            page = in.readInt();
+        }
+        version = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(seed);
+        if (results == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(results);
+        }
+        if (page == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(page);
+        }
+        dest.writeString(version);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Info> CREATOR = new Creator<Info>() {
+        @Override
+        public Info createFromParcel(Parcel in) {
+            return new Info(in);
+        }
+
+        @Override
+        public Info[] newArray(int size) {
+            return new Info[size];
+        }
+    };
 
     public String getSeed() {
         return seed;

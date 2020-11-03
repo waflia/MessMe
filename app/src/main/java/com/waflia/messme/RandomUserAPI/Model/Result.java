@@ -1,9 +1,12 @@
 
 package com.waflia.messme.RandomUserAPI.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
-public class Result {
+public class Result implements Parcelable {
 
     @Json(name = "gender")
     private String gender;
@@ -29,6 +32,56 @@ public class Result {
     private Picture picture;
     @Json(name = "nat")
     private String nat;
+
+    protected Result(Parcel in) {
+        gender = in.readString();
+        name = in.readParcelable(Name.class.getClassLoader());
+        location = in.readParcelable(Location.class.getClassLoader());
+        email = in.readString();
+        login = in.readParcelable(Login.class.getClassLoader());
+        dob = in.readParcelable(Dob.class.getClassLoader());
+        registered = in.readParcelable(Registered.class.getClassLoader());
+        phone = in.readString();
+        cell = in.readString();
+        id = in.readParcelable(Id.class.getClassLoader());
+        picture = in.readParcelable(Picture.class.getClassLoader());
+        nat = in.readString();
+    }
+    public Result(){
+
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(gender);
+        dest.writeParcelable(name, flags);
+        dest.writeParcelable(location, flags);
+        dest.writeString(email);
+        dest.writeParcelable(login, flags);
+        dest.writeParcelable(dob, flags);
+        dest.writeParcelable(registered, flags);
+        dest.writeString(phone);
+        dest.writeString(cell);
+        dest.writeParcelable(id, flags);
+        dest.writeParcelable(picture, flags);
+        dest.writeString(nat);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Result> CREATOR = new Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
 
     public String getGender() {
         return gender;
@@ -125,5 +178,6 @@ public class Result {
     public void setNat(String nat) {
         this.nat = nat;
     }
+
 
 }

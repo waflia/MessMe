@@ -44,6 +44,7 @@ import java.util.Objects;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
+import static com.waflia.messme.MainActivity.CHAT_RESULT;
 import static com.waflia.messme.MainActivity.CHAT_USER_EMAIL;
 import static com.waflia.messme.MainActivity.CHAT_USER_FIRST;
 
@@ -71,11 +72,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(result == null){
-            result = new Result();
-            result.setEmail(getIntent().getExtras().getString(CHAT_USER_EMAIL));
-            Name username = new Name();
-            username.setFirst(getIntent().getExtras().getString(CHAT_USER_FIRST));
-            result.setName(username);
+            result = (Result)getIntent().getParcelableExtra(CHAT_RESULT);
+            //result = new Result();
+            //result.setEmail(getIntent().getExtras().getString(CHAT_USER_EMAIL));
+            //Name username = new Name();
+            //username.setFirst(getIntent().getExtras().getString(CHAT_USER_FIRST));
+            //result.setName(username);
         }
 //        Toolbar actionBar = findViewById(R.id.action_bar);
 //        setSupportActionBar(actionBar);
@@ -85,7 +87,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         //mViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
        // if(mViewModel.getResult() == null) mViewModel.setResult(result);
        // result = mViewModel.getResult();
-        setTitle(result.getName().getFirst());
+        setTitle(result.getName().getFullName());
 
         checkFirebaseAuth();
 
@@ -188,14 +190,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add("menu 1");
-        menu.add("menu 2");
-        return false;
-        //return super.onCreateOptionsMenu(menu);
-    }
-
     public String getChatId(){
         if(currentUser.hashCode() < result.getEmail().hashCode()) {
             return currentUser + result.getEmail();
@@ -214,5 +208,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("menu 1");
+        menu.add("menu 2");
+        return false;
+        //return super.onCreateOptionsMenu(menu);
     }
 }

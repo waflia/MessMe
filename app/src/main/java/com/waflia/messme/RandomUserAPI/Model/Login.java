@@ -1,9 +1,12 @@
 
 package com.waflia.messme.RandomUserAPI.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
-public class Login {
+public class Login implements Parcelable {
 
     @Json(name = "uuid")
     private String uuid;
@@ -19,6 +22,44 @@ public class Login {
     private String sha1;
     @Json(name = "sha256")
     private String sha256;
+
+    protected Login(Parcel in) {
+        uuid = in.readString();
+        username = in.readString();
+        password = in.readString();
+        salt = in.readString();
+        md5 = in.readString();
+        sha1 = in.readString();
+        sha256 = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uuid);
+        dest.writeString(username);
+        dest.writeString(password);
+        dest.writeString(salt);
+        dest.writeString(md5);
+        dest.writeString(sha1);
+        dest.writeString(sha256);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Login> CREATOR = new Creator<Login>() {
+        @Override
+        public Login createFromParcel(Parcel in) {
+            return new Login(in);
+        }
+
+        @Override
+        public Login[] newArray(int size) {
+            return new Login[size];
+        }
+    };
 
     public String getUuid() {
         return uuid;

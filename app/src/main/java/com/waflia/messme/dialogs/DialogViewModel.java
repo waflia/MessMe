@@ -102,14 +102,14 @@ public class DialogViewModel extends AndroidViewModel {
                     Log.d("MessMe", "Success api response");
                     RandomUserResponse randomUserResponse = response.body();
                     List<Result> resultList = randomUserResponse.getResults();
-
                     results.setValue(resultList);
                     ContentValues cv;
                     for(int i = 0; i < resultList.size(); i++){
                         cv = new ContentValues();
-                        cv.put("id", resultList.get(i).getId().getValue());
-                        cv.put("id", resultList.get(i).getName().getFirst());
-                        cv.put("id", resultList.get(i).getEmail());
+                        cv.put("id", i);
+                        cv.put("name", resultList.get(i).getName().getFirst());
+                        cv.put("email", resultList.get(i).getEmail());
+                        cv.put("picture", resultList.get(i).getPicture().getLarge());
                         sqLiteDatabase.insert("Users", null, cv);
                     }
 
